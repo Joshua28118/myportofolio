@@ -1,3 +1,3 @@
-Name : Nama Anda
-NPM  : 2206000000
-Class: PBP A
+Name : Joshua Imanuel Setiawan
+NPM  : 2506656854
+Class: PBP D
