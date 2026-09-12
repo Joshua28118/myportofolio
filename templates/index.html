@@ -4,21 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joshua — Portfolio</title>
+    <title>{{name}} — Portfolio</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header class="site-header">
         <div class="container header-content">
-            <a href="#home" class="brand">
-                Joshua Imanuel Setiawan
+            <a href="{% url 'main:show_main' %}" class="brand">
+                {{name}}
             </a>
 
             <nav aria-label="Navigasi utama">
-                <a href="#home">Home</a>
-                <a href="#projects">Projects</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
+                <a href="{% url 'main:show_main' %}">Profile</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
             </nav>
 
             <a href="#contact" class="button">Let’s Connect ↗</a>
@@ -31,12 +29,10 @@
                 <p class="eyebrow">
                     Computer Science · Universitas Indonesia
                 </p>
-                <h1>Joshua<span>.</span></h1>
+                <h1>{{name}}<span>.</span></h1>
                 <h2>Computer Science Student</h2>
                 <p class="hero-description">
-                    A curious builder from Jakarta, passionate about coding,
-                    AI, and creating meaningful solutions. Always excited
-                    to learn new technologies and build useful things.
+                    {{bio}}
                 </p>
 
                 <div class="social-links">
@@ -54,11 +50,11 @@
                 <dl class="profile-info">
                     <div>
                         <dt>NPM</dt>
-                        <dd>2506656854</dd>
+                        <dd>{{npm}}</dd>
                     </div>
                     <div>
                         <dt>Program</dt>
-                        <dd>S1 Ilmu Komputer</dd>
+                        <dd>{{study_program}}</dd>
                     </div>
                 </dl>
             </div>
@@ -161,7 +157,7 @@
     </main>
 
     <footer class="site-footer container">
-        <p>Joshua Imanuel Setiawan.</p>
+        <p>&copy; 2026 {{name}}. Fakultas Ilmu Komputer, Unniversitas Indonesia</p>
     </footer>
 </body>
 </html>
