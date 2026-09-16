@@ -1,164 +1,193 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{name}} — Portfolio</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container header-content">
-            <a href="{% url 'main:show_main' %}" class="brand">
-                {{name}}
-            </a>
 
-            <nav aria-label="Navigasi utama">
-                <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_education' %}">Education</a>
-            </nav>
+{% block meta %}
+<title>{{ name }} — Portfolio</title>
+{% endblock meta %}
 
-            <a href="#contact" class="button">Let’s Connect ↗</a>
-        </div>
-    </header>
+{% block content %}
+<main class="container">
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <p class="eyebrow">
+                Computer Science · Universitas Indonesia
+            </p>
 
-    <main class="container">
-        <section class="hero" id="home">
-            <div class="hero-content">
-                <p class="eyebrow">
-                    Computer Science · Universitas Indonesia
-                </p>
-                <h1>{{name}}<span>.</span></h1>
-                <h2>Computer Science Student</h2>
-                <p class="hero-description">
-                    {{bio}}
-                </p>
+            <h1>{{ name }}<span>.</span></h1>
+            <h2>Computer Science Student</h2>
 
-                <div class="social-links">
-                    <a class="button" href="https://www.linkedin.com/in/joshua-imanuel-setiawan-820114271/">
-                        LinkedIn ↗
-                    </a>
-                    <a class="button" href="https://github.com/Joshua28118">
-                        GitHub ↗
-                    </a>
-                    <a class="button" href="mailto:joshuaimanuel309@gmail.com">
-                        Gmail ↗
-                    </a>
-                </div>
+            <p class="hero-description">
+                {{ bio }}
+            </p>
 
-                <dl class="profile-info">
-                    <div>
-                        <dt>NPM</dt>
-                        <dd>{{npm}}</dd>
-                    </div>
-                    <div>
-                        <dt>Program</dt>
-                        <dd>{{study_program}}</dd>
-                    </div>
-                </dl>
-            </div>
-
-            <div class="hero-visual">
-                <div class="photo-backdrop" aria-hidden="true"></div>
-                <img
-                    class="hero-photo"
-                    src="{% static 'img/JoshuaMantap.png' %}"
-                    alt="Joshua Imanuel Setiawan"
-                    width="480"
-                    height="560"
+            <div class="social-links">
+                <a
+                    class="button"
+                    href="https://www.linkedin.com/in/joshua-imanuel-setiawan-820114271/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
-                <p class="photo-note note-top">
-                    YEAYYY<br>ill be here coy.
-                </p>
-                <p class="photo-note note-bottom">
-                    Same person,<br>bigger dreams.
-                </p>
-            </div>
-        </section>
+                    LinkedIn ↗
+                </a>
 
-        <section class="projects-section" id="projects">
-            <div class="section-heading">
-                <div>
-                    <p class="eyebrow">Featured work</p>
-                    <h2>Projects</h2>
-                </div>
-                <a href="https://github.com/Joshua28118" class="text-link">
-                    View GitHub ↗
+                <a
+                    class="button"
+                    href="https://github.com/Joshua28118"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    GitHub ↗
+                </a>
+
+                <a
+                    class="button"
+                    href="mailto:joshuaimanuel309@gmail.com"
+                >
+                    Gmail ↗
                 </a>
             </div>
 
-            <div class="project-grid">
-                <article class="project-card">
-                    <div class="project-preview">
-                        <span>&lt;/&gt;</span>
-                        <strong>My Portfolio</strong>
-                        <p>A little introduction to me.</p>
-                    </div>
-                    <div class="project-heading">
-                        <h3>Personal Portfolio</h3>
-                        <a
-                            href="https://github.com/Joshua28118/myportofolio"
-                            aria-label="Lihat kode Personal Portfolio di GitHub"
-                        >↗</a>
-                    </div>
-                    <p>Website profil pribadi berisi pendidikan dan kontak saya.</p>
-                    <ul class="tags" aria-label="Teknologi">
-                        <li>Django</li>
-                        <li>HTML</li>
-                        <li>CSS</li>
-                    </ul>
-                </article>
+            <dl class="profile-info">
+                <div>
+                    <dt>NPM</dt>
+                    <dd>{{ npm }}</dd>
+                </div>
+
+                <div>
+                    <dt>Program</dt>
+                    <dd>{{ study_program }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="hero-visual">
+            <div class="photo-backdrop" aria-hidden="true"></div>
+
+            <img
+                class="hero-photo"
+                src="{% static 'img/JoshuaMantap.png' %}"
+                alt="Joshua Imanuel Setiawan"
+                width="480"
+                height="560"
+            >
+
+            <p class="photo-note note-top">
+                YEAYYY<br>ill be here coy.
+            </p>
+
+            <p class="photo-note note-bottom">
+                Same person,<br>bigger dreams.
+            </p>
+        </div>
+    </section>
+
+    <section class="projects-section" id="projects">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">Featured work</p>
+                <h2>Projects</h2>
             </div>
-        </section>
 
-        <div class="bottom-grid">
-            <section class="panel education-section" id="about">
-                <p class="eyebrow">Education</p>
-                <h2>My Journey</h2>
+            <a
+                href="https://github.com/Joshua28118"
+                class="text-link"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                View GitHub ↗
+            </a>
+        </div>
 
-                <ol class="education-timeline">
-                    <li>
-                        <h3>Universitas Indonesia</h3>
-                        <p>S1 Computer Science</p>
-                    </li>
-                    <li>
-                        <h3>SMA Negeri 8 Jakarta</h3>
-                        <p>Senior High School</p>
-                    </li>
-                </ol>
+        <div class="project-grid">
+            <article class="project-card">
+                <div class="project-preview">
+                    <span>&lt;/&gt;</span>
+                    <strong>My Portfolio</strong>
+                    <p>A little introduction to me.</p>
+                </div>
 
-                <blockquote>
-                    Don't lose your future over something temporary.
-                </blockquote>
-            </section>
+                <div class="project-heading">
+                    <h3>Personal Portfolio</h3>
 
-            <section class="panel contact-section" id="contact">
-                <p class="eyebrow">Get in touch</p>
-                <h2>Let’s Connect</h2>
-                <p>
-                    Have an idea, a collaboration in mind,
-                    or just want to say hello? Feel free to reach out.
-                </p>
-
-                <div class="contact-links">
-                    <a href="mailto:joshuaimanuel309@gmail.com">
-                        <span>Email</span><span aria-hidden="true">↗</span>
-                    </a>
-                    <a href="https://www.linkedin.com/in/joshua-imanuel-setiawan-820114271/">
-                        <span>LinkedIn</span><span aria-hidden="true">↗</span>
-                    </a>
-                    <a href="https://github.com/Joshua28118">
-                        <span>GitHub</span><span aria-hidden="true">↗</span>
+                    <a
+                        href="https://github.com/Joshua28118/myportofolio"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Lihat kode Personal Portfolio di GitHub"
+                    >
+                        ↗
                     </a>
                 </div>
-            </section>
-        </div>
-    </main>
 
-    <footer class="site-footer container">
-        <p>&copy; 2026 {{name}}. Fakultas Ilmu Komputer, Unniversitas Indonesia</p>
-    </footer>
-</body>
-</html>
+                <p>
+                    Website profil pribadi berisi pendidikan dan kontak saya.
+                </p>
+
+                <ul class="tags" aria-label="Teknologi">
+                    <li>Django</li>
+                    <li>HTML</li>
+                    <li>CSS</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <div class="bottom-grid">
+        <section class="panel education-section" id="about">
+            <p class="eyebrow">Education</p>
+            <h2>My Journey</h2>
+
+            <ol class="education-timeline">
+                <li>
+                    <h3>Universitas Indonesia</h3>
+                    <p>S1 Computer Science</p>
+                </li>
+
+                <li>
+                    <h3>SMA Negeri 8 Jakarta</h3>
+                    <p>Senior High School</p>
+                </li>
+            </ol>
+
+            <blockquote>
+                Don't lose your future over something temporary.
+            </blockquote>
+        </section>
+
+        <section class="panel contact-section" id="contact">
+            <p class="eyebrow">Get in touch</p>
+            <h2>Let’s Connect</h2>
+
+            <p>
+                Have an idea, a collaboration in mind,
+                or just want to say hello? Feel free to reach out.
+            </p>
+
+            <div class="contact-links">
+                <a href="mailto:joshuaimanuel309@gmail.com">
+                    <span>Email</span>
+                    <span aria-hidden="true">↗</span>
+                </a>
+
+                <a
+                    href="https://www.linkedin.com/in/joshua-imanuel-setiawan-820114271/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span>LinkedIn</span>
+                    <span aria-hidden="true">↗</span>
+                </a>
+
+                <a
+                    href="https://github.com/Joshua28118"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <span>GitHub</span>
+                    <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock content %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}
+<title>Tambah Pendidikan - {{ name }}</title>
+<link rel="stylesheet" href="{% static 'css/education.css' %}">
+{% endblock meta %}
+
+{% block content %}
+<main class="education-page">
+    <div class="container">
+        <p class="education-kicker">My academic journey</p>
+        <h1>Tambah Pendidikan</h1>
+
+        <form
+            method="post"
+            action="{% url 'main:create_education' %}"
+            class="education-form"
+        >
+            {% csrf_token %}
+
+            {% for error in form.non_field_errors %}
+                <p class="form-error" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}
+                            <span class="required-mark">*</span>
+                        {% endif %}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <p class="form-help">
+                            {{ field.help_text }}
+                        </p>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="form-error" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="form-actions">
+                <button type="submit" class="button">
+                    Simpan Pendidikan
+                </button>
+
+                <a
+                    href="{% url 'main:show_education' %}"
+                    class="button education-cancel"
+                >
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock content %}

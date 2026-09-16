@@ -1,0 +1,72 @@
+.education-delete-actions {
+    margin-top: 1.25rem;
+}
+
+.education-page .button.education-delete-button {
+    border: 1px solid #b42318;
+    background: #b42318;
+    color: #fff;
+}
+
+.education-page .button.education-delete-button:hover {
+    border-color: #912018;
+    background: #912018;
+}
+
+.education-delete-dialog {
+    position: fixed;
+    inset: 0;
+    box-sizing: border-box;
+    width: min(480px, calc(100% - 2rem));
+    max-height: calc(100dvh - 2rem);
+    margin: auto;
+    padding: 1.5rem;
+    overflow-y: auto;
+    border: 1px solid var(--border, #eddfd1);
+    border-radius: 12px;
+    background: var(--background, #fdf9f3);
+    color: var(--text, #171717);
+    box-shadow: 0 20px 60px rgb(0 0 0 / 25%);
+    overflow-wrap: anywhere;
+}
+
+.education-delete-dialog::backdrop {
+    background: rgb(0 0 0 / 45%);
+}
+
+.education-delete-dialog h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.education-delete-dialog p {
+    line-height: 1.7;
+}
+
+.education-delete-controls {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.education-delete-controls form {
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .education-delete-controls {
+        flex-direction: column;
+    }
+
+    .education-delete-controls .button,
+    .education-delete-controls form {
+        width: 100%;
+    }
+
+    .education-delete-controls .button {
+        justify-content: center;
+        text-align: center;
+    }
+}

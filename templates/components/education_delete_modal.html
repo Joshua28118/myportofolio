@@ -1,0 +1,54 @@
+<div class="education-delete-actions">
+    <button
+        type="button"
+        class="button education-delete-button"
+        popovertarget="delete-education-{{ education.id }}"
+    >
+        Hapus Pendidikan
+    </button>
+</div>
+
+<div
+    id="delete-education-{{ education.id }}"
+    class="education-delete-dialog"
+    popover="auto"
+    role="dialog"
+    aria-labelledby="delete-title-{{ education.id }}"
+    aria-describedby="delete-description-{{ education.id }}"
+>
+    <h2 id="delete-title-{{ education.id }}">
+        Hapus Pendidikan?
+    </h2>
+
+    <p id="delete-description-{{ education.id }}">
+        Apakah kamu yakin ingin menghapus
+        <strong>{{ education.institution }}</strong>?
+        Data yang dihapus tidak dapat dikembalikan melalui halaman ini.
+    </p>
+
+    <div class="education-delete-controls">
+        <button
+            type="button"
+            class="button education-cancel"
+            popovertarget="delete-education-{{ education.id }}"
+            popovertargetaction="hide"
+            autofocus
+        >
+            Batal
+        </button>
+
+        <form
+            method="post"
+            action="{% url 'main:delete_education' education.id %}"
+        >
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="button education-delete-button"
+            >
+                Ya, Hapus
+            </button>
+        </form>
+    </div>
+</div>

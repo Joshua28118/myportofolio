@@ -1,0 +1,182 @@
+.education-page {
+    padding: 3rem 0;
+}
+
+.education-kicker {
+    margin-bottom: 0.5rem;
+    color: var(--accent, #f35b26);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.education-page h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.education-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.education-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(min(100%, 260px), 1fr)
+    );
+    gap: 1.25rem;
+}
+
+.education-card {
+    min-width: 0;
+    padding: 1.5rem;
+    border: 1px solid var(--border, #eddfd1);
+    border-radius: 12px;
+    background: #fff;
+    overflow-wrap: anywhere;
+}
+
+.education-category {
+    margin-bottom: 0.75rem;
+    color: var(--accent, #f35b26);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.education-card h2 {
+    margin-bottom: 0.75rem;
+    font-size: 1.35rem;
+}
+
+.education-description {
+    color: var(--muted, #686563);
+    white-space: pre-line;
+}
+
+.education-status {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.education-empty {
+    color: var(--muted, #686563);
+}
+
+.education-message {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.education-form {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 1.5rem;
+}
+
+.education-form .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.education-form label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 700;
+}
+
+.education-form input,
+.education-form textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 0.75rem;
+    border: 1px solid var(--border, #eddfd1);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text, #171717);
+    font: inherit;
+}
+
+.education-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.education-form input:focus,
+.education-form textarea:focus {
+    outline: 2px solid var(--accent, #f35b26);
+    outline-offset: 2px;
+}
+
+.education-form .form-help {
+    margin-top: 0.35rem;
+    color: var(--muted, #686563);
+    font-size: 0.85rem;
+}
+
+.education-form .form-error {
+    margin-top: 0.35rem;
+    color: #b42318;
+    font-size: 0.9rem;
+}
+
+.education-form .required-mark {
+    color: #b42318;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.education-page .button {
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+}
+
+.education-page .education-cancel {
+    border: 1px solid var(--border, #eddfd1);
+    background: #fff;
+    color: var(--text, #171717);
+}
+
+@media (max-width: 600px) {
+    .education-page {
+        padding: 2rem 0;
+    }
+
+    .education-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .education-heading .button {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .button {
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+    }
+}

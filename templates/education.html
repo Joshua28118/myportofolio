@@ -1,70 +1,105 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Education - {{ name }}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container header-content">
-            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
 
-            <nav aria-label="Navigasi utama">
-                <a href="{% url 'main:show_main' %}">Profile</a>
-                <a href="{% url 'main:show_experience' %}">Experience</a>
-                <a href="{% url 'main:show_education' %}">Education</a>
-            </nav>
+{% block meta %}
+<title>Education - {{ name }}</title>
+<link rel="stylesheet" href="{% static 'css/education.css' %}">
+<link rel="stylesheet" href="{% static 'css/education-delete.css' %}">
+{% endblock meta %}
 
-            <a href="{% url 'main:show_main' %}#contact" class="button">
-                Let’s Connect ↗
+{% block content %}
+<main class="education-page">
+    <div class="container">
+        <p class="education-kicker">My academic journey</p>
+
+        <div class="education-heading">
+            <h1>Education</h1>
+
+            <a href="{% url 'main:create_education' %}" class="button">
+                + Tambah Pendidikan
             </a>
         </div>
-    </header>
 
-    <main>
-        <section class="experience-section">
-            <div class="container">
-                <p class="section-kicker">My academic journey</p>
-                <h1>Education</h1>
+        {% for message in messages %}
+            <p class="education-message" role="status">
+                {{ message }}
+            </p>
+        {% endfor %}
 
-                <div class="experience-grid">
-                    {% for education in educations %}
-                        <article class="experience-card">
-                            <span class="experience-category">
-                                {{ education.program }}
-                            </span>
+        <form
+            method="get"
+            action="{% url 'main:show_education' %}"
+            class="education-form"
+            role="search"
+        >
+            <div class="form-group">
+                <label for="institution-search">
+                    Cari pendidikan berdasarkan nama institusi
+                </label>
 
-                            <h2>{{ education.institution }}</h2>
-
-                            <p class="experience-description">
-                                {{ education.description }}
-                            </p>
-
-                            <p class="experience-status">
-                                {{ education.started_at|date:"M Y" }}
-                                -
-                                {% if education.ended_at %}
-                                    {{ education.ended_at|date:"M Y" }}
-                                {% else %}
-                                    Present
-                                {% endif %}
-                            </p>
-                        </article>
-                    {% empty %}
-                        <p class="empty-state">
-                            No education has been added yet.
-                        </p>
-                    {% endfor %}
-                </div>
+                <input
+                    type="search"
+                    id="institution-search"
+                    name="institution"
+                    value="{{ institution_query }}"
+                    placeholder="Contoh: Universitas Indonesia"
+                >
             </div>
-        </section>
-    </main>
 
-    <footer class="site-footer container">
-        <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
-    </footer>
-</body>
-</html>
+            <div class="form-group form-actions">
+                <button type="submit" class="button">
+                    Cari
+                </button>
+
+                {% if institution_query %}
+                    <a
+                        href="{% url 'main:show_education' %}"
+                        class="button education-cancel"
+                    >
+                        Reset
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+
+        <div class="education-grid">
+            {% for education in educations %}
+                <article class="education-card">
+                    <p class="education-category">
+                        {{ education.program }}
+                    </p>
+
+                    <h2>{{ education.institution }}</h2>
+
+                    <p class="education-description">
+                        {{ education.description }}
+                    </p>
+
+                    <p class="education-status">
+                        {{ education.started_at|date:"M Y" }}
+                        -
+                        {% if education.ended_at %}
+                            {{ education.ended_at|date:"M Y" }}
+                        {% else %}
+                            Present
+                        {% endif %}
+                    </p>
+
+                    {% include "components/education_delete_modal.html" with education=education %}
+                </article>
+            {% empty %}
+                {% if institution_query %}
+                    <p class="education-empty">
+                        Tidak ada pendidikan dengan nama institusi
+                        "{{ institution_query }}".
+                    </p>
+                {% else %}
+                    <p class="education-empty">
+                        No education has been added yet.
+                    </p>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock content %}
