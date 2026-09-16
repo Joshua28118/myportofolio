@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+{% block meta %}
+<title>{{ heading }} - {{ name }}</title>
+<link rel="stylesheet" href="{% static 'css/portfolio-features.css' %}">
+{% endblock meta %}
+{% block content %}
+<main class="portfolio-features container">
+    <h1>{{ heading }}</h1>
+    <form method="post" class="feature-form">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}<p class="feature-error" role="alert">{{ error }}</p>{% endfor %}
+        {% for field in form %}
+            <div class="feature-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+                {{ field }}
+                {% if field.help_text %}<p class="feature-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}
+                {% for error in field.errors %}<p class="feature-error" role="alert">{{ error }}</p>{% endfor %}
+            </div>
+        {% endfor %}
+        <div class="feature-actions">
+            <button type="submit" class="button">Simpan</button>
+            <a href="{% url cancel_route %}" class="button">Batal</a>
+        </div>
+    </form>
+</main>
+{% endblock content %}

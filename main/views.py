@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from main.forms import EducationForm
-from main.models import Education, Experience
+from main.forms import EducationForm, ExperienceForm, ProjectForm
+from main.models import Education, Experience, Project
 
 
 def show_main(request):
@@ -117,3 +117,86 @@ def delete_education(request, education_id):
     )
 
     return redirect("main:show_education")
+
+
+def create_experience(request):
+    return _experience_form(request)
+
+
+def edit_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+    return _experience_form(request, experience)
+
+
+def _experience_form(request, experience=None):
+    editing = experience is not None
+    form = ExperienceForm(
+        request.POST if request.method == 'POST' else None,
+        instance=experience,
+    )
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(
+            request,
+            'Experience berhasil diperbarui.' if editing else 'Experience berhasil ditambahkan.',
+        )
+        return redirect('main:show_experience')
+    return render(request, 'portfolio_form.html', {
+        'name': 'Joshua Imanuel Setiawan',
+        'heading': 'Edit Experience' if editing else 'Tambah Experience',
+        'form': form,
+        'cancel_route': 'main:show_experience',
+    })
+
+
+@require_POST
+def delete_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+    experience.delete()
+    messages.success(request, 'Experience berhasil dihapus.')
+    return redirect('main:show_experience')
+
+
+def get_projects_json(request):
+    title_query = request.GET.get('title', '').strip()
+    projects = Project.objects.all()
+    if title_query:
+        projects = projects.filter(title__icontains=title_query)
+    return HttpResponse(
+        serializers.serialize('json', projects, indent=2),
+        content_type='application/json',
+    )
+
+
+def show_projects(request):
+    json_response = get_projects_json(request)
+    projects = [row.object for row in serializers.deserialize(
+        'json', json_response.content.decode('utf-8')
+    )]
+    return render(request, 'projects.html', {
+        'name': 'Joshua Imanuel Setiawan',
+        'project_list': projects,
+        'title_query': request.GET.get('title', '').strip(),
+    })
+
+
+def create_project(request):
+    form = ProjectForm(request.POST if request.method == 'POST' else None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Proyek berhasil ditambahkan.')
+        return redirect('main:show_projects')
+    return render(request, 'portfolio_form.html', {
+        'name': 'Joshua Imanuel Setiawan',
+        'heading': 'Tambah Proyek',
+        'form': form,
+        'cancel_route': 'main:show_projects',
+    })
+
+
+@require_POST
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    project.delete()
+    messages.success(request, 'Proyek berhasil dihapus.')
+    return redirect('main:show_projects')
