@@ -1,12 +1,52 @@
-<button type="button" class="button feature-danger" popovertarget="delete-{{ kind }}-{{ item.id }}">{% if kind == "project" %}Hapus Proyek{% else %}Delete{% endif %}</button>
-<div id="delete-{{ kind }}-{{ item.id }}" class="feature-dialog" popover="auto" role="dialog" aria-labelledby="delete-title-{{ kind }}-{{ item.id }}" aria-describedby="delete-description-{{ kind }}-{{ item.id }}">
-    <h2 id="delete-title-{{ kind }}-{{ item.id }}">{% if kind == "project" %}Hapus Proyek?{% else %}Hapus Experience?{% endif %}</h2>
-    <p id="delete-description-{{ kind }}-{{ item.id }}">Hapus <strong>{{ item.title }}</strong>? Data yang dihapus tidak dapat dikembalikan melalui halaman ini.</p>
+<button
+    type="button"
+    class="button feature-danger"
+    popovertarget="delete-{{ kind }}-{{ item.id }}"
+>
+    {% if kind == "project" %}
+        Hapus Proyek
+    {% else %}
+        Delete
+    {% endif %}
+</button>
+
+<div
+    id="delete-{{ kind }}-{{ item.id }}"
+    class="feature-dialog"
+    popover="auto"
+    role="dialog"
+    aria-labelledby="delete-title-{{ kind }}-{{ item.id }}"
+    aria-describedby="delete-description-{{ kind }}-{{ item.id }}"
+>
+    <h2 id="delete-title-{{ kind }}-{{ item.id }}">
+        {% if kind == "project" %}
+            Hapus Proyek?
+        {% else %}
+            Hapus Experience?
+        {% endif %}
+    </h2>
+
+    <p id="delete-description-{{ kind }}-{{ item.id }}">
+        Hapus <strong>{{ item.title }}</strong>?
+        Data yang dihapus tidak dapat dikembalikan melalui halaman ini.
+    </p>
+
     <div class="feature-actions">
-        <button type="button" class="button" popovertarget="delete-{{ kind }}-{{ item.id }}" popovertargetaction="hide" autofocus>Batal</button>
+        <button
+            type="button"
+            class="button"
+            popovertarget="delete-{{ kind }}-{{ item.id }}"
+            popovertargetaction="hide"
+            autofocus
+        >
+            Batal
+        </button>
+
         <form method="post" action="{% url delete_route item.id %}">
             {% csrf_token %}
-            <button type="submit" class="button feature-danger">Ya, Hapus</button>
+            <button type="submit" class="button feature-danger">
+                Ya, Hapus
+            </button>
         </form>
     </div>
 </div>
