@@ -9,7 +9,9 @@
     <p class="eyebrow">My journey so far</p>
     <div class="feature-heading">
         <h1>Experience</h1>
-        <a href="{% url 'main:create_experience' %}" class="button">+ Tambah Experience</a>
+        {% if user.is_superuser %}
+            <a href="{% url 'main:create_experience' %}" class="button">+ Tambah Experience</a>
+        {% endif %}
     </div>
     {% include "components/portfolio_messages.html" %}
     <div class="feature-grid">
@@ -22,8 +24,14 @@
                     {% if experience.is_ongoing %}Ongoing{% else %}Completed{% endif %}
                 </p>
                 <div class="feature-actions">
-                    <a href="{% url 'main:edit_experience' experience.id %}" class="button">Edit</a>
-                    {% include "components/portfolio_delete.html" with item=experience kind="experience" delete_route="main:delete_experience" %}
+                    <a href="{% url 'main:experience_detail' experience.id %}" class="text-link">Lihat Detail</a>
+                    {% include "components/experience_star.html" with experience=experience %}
+                    {% if can_edit %}
+                        <a href="{% url 'main:edit_experience' experience.id %}" class="button">Edit</a>
+                    {% endif %}
+                    {% if user.is_superuser %}
+                        {% include "components/portfolio_delete.html" with item=experience kind="experience" delete_route="main:delete_experience" %}
+                    {% endif %}
                 </div>
             </article>
         {% empty %}

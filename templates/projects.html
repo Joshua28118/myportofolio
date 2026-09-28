@@ -29,6 +29,9 @@
                 <div class="feature-actions">
                     {% if project.project_url %}<a href="{{ project.project_url }}" class="text-link" target="_blank" rel="noopener noreferrer">Lihat Proyek ↗</a>{% endif %}
                     {% include "components/project_star.html" with project=project %}
+                    {% if can_edit %}
+                        <a href="{% url 'main:edit_project' project.id %}" class="button">Edit</a>
+                    {% endif %}
                     {% if user.is_superuser %}
                         {% include "components/portfolio_delete.html" with item=project kind="project" delete_route="main:delete_project" %}
                     {% endif %}

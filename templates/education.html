@@ -15,9 +15,11 @@
         <div class="education-heading">
             <h1>Education</h1>
 
+            {% if user.is_superuser %}
             <a href="{% url 'main:create_education' %}" class="button">
                 + Tambah Pendidikan
             </a>
+            {% endif %}
         </div>
 
         {% for message in messages %}
@@ -85,7 +87,12 @@
                         {% endif %}
                     </p>
 
-                    {% include "components/education_delete_modal.html" with education=education %}
+                    {% if can_edit %}
+                        <a href="{% url 'main:edit_education' education.id %}" class="button">Edit</a>
+                    {% endif %}
+                    {% if user.is_superuser %}
+                        {% include "components/education_delete_modal.html" with education=education %}
+                    {% endif %}
                 </article>
             {% empty %}
                 {% if institution_query %}

@@ -8,6 +8,10 @@ from main.views import (
     delete_experience,
     delete_project,
     edit_experience,
+    edit_education,
+    edit_project,
+    experience_detail,
+    toggle_experience_star,
     get_education_json,
     get_experience_json,
     get_projects_json,
@@ -31,6 +35,8 @@ urlpatterns = [
     ),
 
     # Experience
+    path("experience/<uuid:experience_id>/", experience_detail, name="experience_detail"),
+    path("experience/<uuid:experience_id>/star/", toggle_experience_star, name="toggle_experience_star"),
     path(
         "experience/",
         show_experience,
@@ -58,6 +64,7 @@ urlpatterns = [
     ),
 
     # Education
+    path("education/<uuid:education_id>/edit/", edit_education, name="edit_education"),
     path(
         "education/",
         show_education,
@@ -80,6 +87,7 @@ urlpatterns = [
     ),
 
     # Projects
+    path("projects/<uuid:project_id>/edit/", edit_project, name="edit_project"),
     path(
         "projects/",
         show_projects,

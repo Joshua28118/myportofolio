@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block meta %}
+<title>{{ experience.title }} - {{ name }}</title>
+<link rel="stylesheet" href="{% static 'css/portfolio-features.css' %}">
+{% endblock meta %}
+{% block content %}
+<main class="portfolio-features container">
+    <a href="{% url 'main:show_experience' %}" class="text-link">Kembali ke Experience</a>
+    {% include "components/portfolio_messages.html" %}
+    <article class="feature-card">
+        <p class="feature-category">{{ experience.get_category_display }}</p>
+        <h1>{{ experience.title }}</h1>
+        <p class="feature-description">{{ experience.description }}</p>
+        <p class="feature-status">
+            {{ experience.started_at|date:"d M Y" }} —
+            {% if experience.ended_at %}{{ experience.ended_at|date:"d M Y" }}{% else %}Ongoing{% endif %}
+        </p>
+        <div class="feature-actions">
+            {% include "components/experience_star.html" with experience=experience return_to="detail" %}
+            {% if can_edit %}
+                <a href="{% url 'main:edit_experience' experience.id %}" class="button">Edit</a>
+            {% endif %}
+            {% if user.is_superuser %}
+                {% include "components/portfolio_delete.html" with item=experience kind="experience" delete_route="main:delete_experience" %}
+            {% endif %}
+        </div>
+    </article>
+</main>
+{% endblock content %}

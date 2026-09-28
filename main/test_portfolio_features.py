@@ -8,7 +8,12 @@ from main.models import Experience, Project
 
 
 class ExperienceFeatureTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = User.objects.create_superuser(username='experience_owner')
+
     def setUp(self):
+        self.client.force_login(self.owner)
         self.item = Experience.objects.create(
             title='Committee member', description='Event preparation', category='volunteer'
         )
@@ -86,6 +91,7 @@ class ExperienceFeatureTests(TestCase):
 
     def test_mutations_require_csrf(self):
         client = Client(enforce_csrf_checks=True)
+        client.force_login(self.owner)
         for url in [self.add_url, self.edit_url, self.delete_url]:
             with self.subTest(url=url):
                 self.assertEqual(client.post(url, self.payload).status_code, 403)
@@ -182,6 +188,7 @@ class ProjectFeatureTests(TestCase):
 
     def test_mutations_require_csrf(self):
         client = Client(enforce_csrf_checks=True)
+        client.force_login(self.owner)
         self.assertEqual(client.post(self.add_url, self.payload).status_code, 403)
         self.assertEqual(client.post(self.delete_url).status_code, 403)
         self.assertTrue(Project.objects.filter(pk=self.item.pk).exists())
