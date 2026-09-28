@@ -9,7 +9,9 @@
     <p class="eyebrow">Karya yang saya bangun</p>
     <div class="feature-heading">
         <h1>Projects</h1>
-        <a href="{% url 'main:create_project' %}" class="button">+ Tambah Proyek</a>
+        {% if user.is_superuser %}
+            <a href="{% url 'main:create_project' %}" class="button">+ Tambah Proyek</a>
+        {% endif %}
     </div>
     {% include "components/portfolio_messages.html" %}
     <form method="get" action="{% url 'main:show_projects' %}" class="feature-search" role="search">
@@ -26,7 +28,10 @@
                 <p class="feature-description">{{ project.description }}</p>
                 <div class="feature-actions">
                     {% if project.project_url %}<a href="{{ project.project_url }}" class="text-link" target="_blank" rel="noopener noreferrer">Lihat Proyek ↗</a>{% endif %}
-                    {% include "components/portfolio_delete.html" with item=project kind="project" delete_route="main:delete_project" %}
+                    {% include "components/project_star.html" with project=project %}
+                    {% if user.is_superuser %}
+                        {% include "components/portfolio_delete.html" with item=project kind="project" delete_route="main:delete_project" %}
+                    {% endif %}
                 </div>
             </article>
         {% empty %}

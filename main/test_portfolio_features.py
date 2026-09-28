@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -93,6 +94,10 @@ class ExperienceFeatureTests(TestCase):
 
 
 class ProjectFeatureTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = User.objects.create_superuser(username='project_owner')
+
     def setUp(self):
         self.item = Project.objects.create(
             title='Portfolio Website', description='Personal site', tech_stack='Django, Python',
@@ -111,6 +116,7 @@ class ProjectFeatureTests(TestCase):
             self.assertContains(response, f'href="{reverse("main:show_education")}"')
 
     def test_list_shows_content_link_and_delete(self):
+        self.client.force_login(self.owner)
         response = self.client.get(self.list_url)
         self.assertTemplateUsed(response, 'projects.html')
         for text in ['Portfolio Website', 'Personal site', 'Django, Python', self.item.project_url, self.delete_url]:
@@ -139,6 +145,7 @@ class ProjectFeatureTests(TestCase):
         self.assertEqual(data[0]['fields']['title'], 'Portfolio Website')
 
     def test_create_form_and_save_without_optional_link(self):
+        self.client.force_login(self.owner)
         self.assertEqual(self.client.get(self.add_url).status_code, 200)
         response = self.client.post(self.add_url, self.payload, follow=True)
         self.assertContains(response, 'Weather App')
@@ -146,6 +153,7 @@ class ProjectFeatureTests(TestCase):
         self.assertEqual(Project.objects.count(), 2)
 
     def test_invalid_link_and_missing_required_fields_are_rejected(self):
+        self.client.force_login(self.owner)
         for payload in [{}, {**self.payload, 'project_url': 'javascript:alert(1)'}]:
             response = self.client.post(self.add_url, payload)
             self.assertEqual(response.status_code, 200)
@@ -158,6 +166,7 @@ class ProjectFeatureTests(TestCase):
         self.assertNotContains(self.client.get(self.list_url), 'Lihat Proyek')
 
     def test_delete_get_preserves_and_post_removes_selected_project(self):
+        self.client.force_login(self.owner)
         other = Project.objects.create(**self.payload)
         self.assertEqual(self.client.get(self.delete_url).status_code, 405)
         self.assertTrue(Project.objects.filter(pk=self.item.pk).exists())
@@ -167,6 +176,7 @@ class ProjectFeatureTests(TestCase):
         self.assertTrue(Project.objects.filter(pk=other.pk).exists())
 
     def test_missing_delete_returns_404(self):
+        self.client.force_login(self.owner)
         response = self.client.post(reverse('main:delete_project', args=[uuid4()]))
         self.assertEqual(response.status_code, 404)
 

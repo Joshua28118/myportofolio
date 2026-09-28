@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block meta %}
+<title>Register - {{ name }}</title>
+<link rel="stylesheet" href="{% static 'css/portfolio-features.css' %}">
+{% endblock meta %}
+
+{% block content %}
+<main class="portfolio-features container">
+    <h1>Create an Account</h1>
+    {% for message in messages %}
+        <p class="feature-message" role="status">{{ message }}</p>
+    {% endfor %}
+    <form method="post" action="{% url 'main:register' %}" class="feature-form">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <p class="feature-error" role="alert">{{ error }}</p>
+        {% endfor %}
+        {% for field in form %}
+            <div class="feature-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="feature-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="feature-error" role="alert">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="feature-actions">
+            <button type="submit" class="button">Register</button>
+            <a href="{% url 'main:login' %}">Already have an account? Login</a>
+        </div>
+    </form>
+</main>
+{% endblock content %}
