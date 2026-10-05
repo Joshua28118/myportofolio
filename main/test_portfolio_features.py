@@ -28,9 +28,10 @@ class ExperienceFeatureTests(TestCase):
     def test_list_exposes_actions_and_existing_status(self):
         response = self.client.get(reverse('main:show_experience'))
         self.assertContains(response, self.add_url)
-        self.assertContains(response, self.edit_url)
-        self.assertContains(response, self.delete_url)
-        self.assertContains(response, 'Ongoing')
+        placeholder = '00000000-0000-0000-0000-000000000000'
+        self.assertContains(response, reverse('main:edit_experience', args=[placeholder]))
+        self.assertContains(response, reverse('main:delete_experience', args=[placeholder]))
+        self.assertTrue(self.client.get(reverse('main:get_experience_json')).json()[0]['fields']['is_ongoing'])
         self.assertContains(response, 'popover="auto"')
 
     def test_form_get_and_cancel(self):
@@ -41,7 +42,7 @@ class ExperienceFeatureTests(TestCase):
 
     def test_create_and_success_message(self):
         response = self.client.post(self.add_url, self.payload, follow=True)
-        self.assertContains(response, 'Research Assistant')
+        self.assertEqual(self.client.get(reverse('main:get_experience_json'), {'title': 'Research'}).json()[0]['fields']['title'], 'Research Assistant')
         self.assertContains(response, 'Experience berhasil ditambahkan.')
         self.assertEqual(Experience.objects.count(), 2)
 
@@ -64,7 +65,7 @@ class ExperienceFeatureTests(TestCase):
         self.assertEqual(self.item.started_at, started_at)
         self.assertEqual(self.item.title, 'Research Assistant')
         self.assertFalse(self.item.is_ongoing)
-        self.assertContains(response, 'Completed')
+        self.assertFalse(self.client.get(reverse('main:get_experience_json')).json()[0]['fields']['is_ongoing'])
 
     def test_invalid_edit_preserves_original(self):
         response = self.client.post(self.edit_url, {**self.payload, 'title': ''})

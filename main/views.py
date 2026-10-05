@@ -50,41 +50,57 @@ def show_main(request):
 
 
 def get_experience_json(request):
-    experiences = Experience.objects.all()
-
-    experience_json = serializers.serialize(
-        "json",
-        experiences,
-        fields=("title", "description", "category", "thumbnail", "started_at", "ended_at"),
-        indent=2,
-    )
-
-    return HttpResponse(
-        experience_json,
-        content_type="application/json",
-    )
+    title_query = request.GET.get("title", "").strip()
+    experiences = Experience.objects.order_by("-started_at", "pk")
+    if title_query:
+        experiences = experiences.filter(title__icontains=title_query)
+    experiences = _add_star_status(list(experiences), Experience, request.user)
+    data = [
+        {
+            "pk": str(experience.pk),
+            "fields": {
+                "title": experience.title,
+                "description": experience.description,
+                "category": experience.category,
+                "category_display": experience.get_category_display(),
+                "thumbnail": experience.thumbnail,
+                "started_at": experience.started_at,
+                "ended_at": experience.ended_at,
+                "is_ongoing": experience.is_ongoing,
+                "star_count": experience.star_count,
+                "is_starred": experience.is_starred,
+            },
+        }
+        for experience in experiences
+    ]
+    return JsonResponse(data, safe=False)
 
 
 def show_experience(request):
-    json_response = get_experience_json(request)
-
-    experience_objects = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-
-    experiences = [
-        experience.object
-        for experience in experience_objects
-    ]
-
     context = {
         "name": "Joshua Imanuel Setiawan",
-        "experience_list": _add_star_status(experiences, Experience, request.user),
+        "form": ExperienceForm(),
+        "title_query": request.GET.get("title", "").strip(),
         "can_edit": can_edit_portfolio(request.user),
     }
-
     return render(request, "experience.html", context)
+
+
+@require_POST
+def create_experience_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan Experience."},
+            status=403,
+        )
+    form = ExperienceForm(request.POST)
+    if form.is_valid():
+        experience = form.save()
+        return JsonResponse(
+            {"message": "Experience berhasil ditambahkan.", "pk": str(experience.pk)},
+            status=201,
+        )
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 
 def experience_detail(request, experience_id):

@@ -67,25 +67,13 @@ class MainTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "experience.html")
 
-        self.assertContains(
-            response,
-            self.experience.title
-        )
-
-        self.assertContains(
-            response,
-            self.experience.description
-        )
-
-        self.assertContains(
-            response,
-            "Part-Time"
-        )
-
-        self.assertContains(
-            response,
-            "Ongoing"
-        )
+        self.assertContains(response, 'id="grid"')
+        self.assertNotContains(response, self.experience.title)
+        fields = self.client.get(reverse("main:get_experience_json")).json()[0]["fields"]
+        self.assertEqual(fields["title"], self.experience.title)
+        self.assertEqual(fields["description"], self.experience.description)
+        self.assertEqual(fields["category_display"], "Part-Time")
+        self.assertTrue(fields["is_ongoing"])
 
         self.assertContains(
             response,
@@ -99,10 +87,8 @@ class MainTest(TestCase):
             reverse("main:show_experience")
         )
 
-        self.assertContains(
-            response,
-            "No experience has been added yet."
-        )
+        self.assertContains(response, 'id="empty"')
+        self.assertEqual(self.client.get(reverse("main:get_experience_json")).json(), [])
 
     def test_completed_experience(self):
         self.experience.ended_at = timezone.now()
@@ -116,15 +102,9 @@ class MainTest(TestCase):
             self.experience.is_ongoing
         )
 
-        self.assertContains(
-            response,
-            "Completed"
-        )
-
-        self.assertNotContains(
-            response,
-            "Ongoing"
-        )
+        fields = self.client.get(reverse("main:get_experience_json")).json()[0]["fields"]
+        self.assertFalse(fields["is_ongoing"])
+        self.assertIsNotNone(fields["ended_at"])
 
     def test_education_url_is_accessible_and_uses_correct_template(self):
         response = self.client.get(

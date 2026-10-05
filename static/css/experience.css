@@ -1,0 +1,55 @@
+.experience-state {
+    padding-block: 1.5rem;
+}
+
+.experience-state .button {
+    margin-top: 1rem;
+}
+
+.experience-thumbnail {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.experience-form-modal {
+    width: min(640px, calc(100% - 2rem));
+}
+
+.experience-form-modal h2 {
+    margin-right: 2rem;
+}
+
+.experience-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.experience-form-modal .button {
+    font: inherit;
+    cursor: pointer;
+}
+
+.experience-form-modal .button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.experience-form-modal .feature-actions {
+    justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+    .experience-form-modal .feature-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+}

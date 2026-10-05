@@ -1,0 +1,18 @@
+<div id="add-experience-modal" class="feature-dialog experience-form-modal" popover="auto" role="dialog" aria-labelledby="add-experience-title">
+    <button type="button" class="experience-modal-close" popovertarget="add-experience-modal" popovertargetaction="hide" aria-label="Tutup formulir Experience">×</button>
+    <h2 id="add-experience-title">Tambah Experience</h2>
+    <form id="experience-form" method="post" action="{% url 'main:create_experience' %}" data-ajax-url="{% url 'main:create_experience_ajax' %}" class="feature-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="feature-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<p class="feature-help">{{ field.help_text }}</p>{% endif %}
+            </div>
+        {% endfor %}
+        <div class="feature-actions">
+            <button type="button" class="button" popovertarget="add-experience-modal" popovertargetaction="hide">Batal</button>
+            <button type="submit" class="button">Tambah Experience</button>
+        </div>
+    </form>
+</div>
