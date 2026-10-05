@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.html import strip_tags
 
 from main.models import Education, Experience, Project
 
@@ -78,6 +79,18 @@ class ExperienceForm(forms.ModelForm):
 
 
 class ProjectForm(forms.ModelForm):
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+        if not title:
+            raise forms.ValidationError("Nama proyek tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_tech_stack(self):
+        return strip_tags(self.cleaned_data["tech_stack"]).strip()
+
+    def clean_description(self):
+        return strip_tags(self.cleaned_data["description"]).strip()
+
     class Meta:
         model = Project
         fields = ['title', 'description', 'tech_stack', 'project_url']

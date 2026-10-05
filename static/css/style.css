@@ -703,3 +703,52 @@ blockquote {
 }
 
 }
+.hide {
+    display: none !important;
+}
+
+.toast-component {
+    position: fixed;
+    inset: auto 1.5rem 1.5rem auto;
+    width: min(420px, calc(100vw - 3rem));
+    margin: 0;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--background);
+    color: var(--text);
+    box-shadow: 0 10px 25px rgb(0 0 0 / 15%);
+    overflow-wrap: anywhere;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast-hidden {
+    opacity: 0;
+    transform: translateY(150%);
+    pointer-events: none;
+}
+
+.toast-show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-title {
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+}
+
+.toast-message {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.toast-success { border-left: 4px solid #22c55e; }
+.toast-error { border-left: 4px solid #b42318; }
+.toast-normal { border-left: 4px solid var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+    .toast-component {
+        transition: none;
+    }
+}

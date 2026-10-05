@@ -2,7 +2,7 @@ import datetime
 from django.contrib import messages
 from django.core import serializers
 from django.db.models import Count
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from django.contrib.auth import login, logout
@@ -285,53 +285,53 @@ def delete_experience(request, experience_id):
 
 
 def get_projects_json(request):
-    title_query = request.GET.get(
-        "title",
-        "",
-    ).strip()
-
+    title_query = request.GET.get("title", "").strip()
     projects = Project.objects.all()
-
     if title_query:
-        projects = projects.filter(
-            title__icontains=title_query,
-        )
-
-    return HttpResponse(
-        serializers.serialize(
-            "json",
-            projects,
-            fields=("title", "description", "tech_stack", "project_url"),
-            indent=2,
-        ),
-        content_type="application/json",
-    )
+        projects = projects.filter(title__icontains=title_query)
+    projects = _add_star_status(list(projects), Project, request.user)
+    data = [
+        {
+            "pk": str(project.pk),
+            "fields": {
+                "title": project.title,
+                "description": project.description,
+                "tech_stack": project.tech_stack,
+                "project_url": project.project_url,
+                "star_count": project.star_count,
+                "is_starred": project.is_starred,
+            },
+        }
+        for project in projects
+    ]
+    return JsonResponse(data, safe=False)
 
 
 def show_projects(request):
-    json_response = get_projects_json(request)
-
-    project_objects = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-
-    projects = [
-        project.object
-        for project in project_objects
-    ]
-
     context = {
         "name": "Joshua Imanuel Setiawan",
-        "project_list": _add_star_status(projects, Project, request.user),
+        "form": ProjectForm(),
         "can_edit": can_edit_portfolio(request.user),
-        "title_query": request.GET.get(
-            "title",
-            "",
-        ).strip(),
+        "title_query": request.GET.get("title", "").strip(),
     }
-
     return render(request, "projects.html", context)
+
+
+@require_POST
+def create_project_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan proyek."},
+            status=403,
+        )
+    form = ProjectForm(request.POST)
+    if form.is_valid():
+        project = form.save()
+        return JsonResponse(
+            {"message": "Proyek berhasil ditambahkan.", "pk": str(project.pk)},
+            status=201,
+        )
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 
 @owner_required

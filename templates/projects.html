@@ -3,6 +3,7 @@
 {% block meta %}
 <title>Projects - {{ name }}</title>
 <link rel="stylesheet" href="{% static 'css/portfolio-features.css' %}">
+<script src="{% static 'js/projects.js' %}" defer></script>
 {% endblock meta %}
 {% block content %}
 <main class="portfolio-features container">
@@ -10,36 +11,58 @@
     <div class="feature-heading">
         <h1>Projects</h1>
         {% if user.is_superuser %}
-            <a href="{% url 'main:create_project' %}" class="button">+ Tambah Proyek</a>
+            <button type="button" class="button" popovertarget="add-project-modal">+ Tambah Proyek</button>
         {% endif %}
     </div>
     {% include "components/portfolio_messages.html" %}
-    <form method="get" action="{% url 'main:show_projects' %}" class="feature-search" role="search">
+    <form id="project-search-form" class="feature-search" role="search">
         <label class="feature-search-label" for="project-search">Cari berdasarkan nama proyek</label>
         <input id="project-search" type="search" name="title" value="{{ title_query }}" placeholder="Cari berdasarkan nama proyek">
         <button type="submit" class="button">Cari</button>
-        {% if title_query %}<a href="{% url 'main:show_projects' %}" class="button">Reset</a>{% endif %}
+        <button type="reset" class="button">Reset</button>
     </form>
-    <div class="feature-grid">
-        {% for project in project_list %}
-            <article class="feature-card">
-                <h2>{{ project.title }}</h2>
-                <p class="feature-category">{{ project.tech_stack }}</p>
-                <p class="feature-description">{{ project.description }}</p>
-                <div class="feature-actions">
-                    {% if project.project_url %}<a href="{{ project.project_url }}" class="text-link" target="_blank" rel="noopener noreferrer">Lihat Proyek ↗</a>{% endif %}
-                    {% include "components/project_star.html" with project=project %}
-                    {% if can_edit %}
-                        <a href="{% url 'main:edit_project' project.id %}" class="button">Edit</a>
-                    {% endif %}
-                    {% if user.is_superuser %}
-                        {% include "components/portfolio_delete.html" with item=project kind="project" delete_route="main:delete_project" %}
-                    {% endif %}
-                </div>
-            </article>
-        {% empty %}
-            <p>{% if title_query %}Tidak ada proyek dengan nama "{{ title_query }}".{% else %}Belum ada proyek yang ditambahkan.{% endif %}</p>
-        {% endfor %}
+    <div id="loading" class="project-state" role="status">Memuat proyek...</div>
+    <div id="error" class="project-state hide" role="alert">
+        <p>Gagal memuat proyek. Silakan coba lagi.</p>
+        <button id="retry-projects" type="button" class="button">Coba lagi</button>
     </div>
+    <div id="empty" class="project-state hide" role="status"></div>
+    <div id="grid" class="feature-grid hide" data-endpoint="{% url 'main:get_projects_json' %}"></div>
+    <noscript><p>Aktifkan JavaScript untuk menampilkan dan mencari proyek.</p></noscript>
+    <template id="project-card-template">
+        <article class="feature-card">
+            <h2></h2>
+            <p class="feature-category"></p>
+            <p class="feature-description"></p>
+            <div class="feature-actions">
+                <a class="text-link project-link" target="_blank" rel="noopener noreferrer">Lihat Proyek ↗</a>
+                {% if user.is_authenticated %}
+                    <form method="post" class="star-form" data-action="{% url 'main:toggle_star' '00000000-0000-0000-0000-000000000000' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button button-star" aria-pressed="false">
+                            <span aria-hidden="true">&#9733;</span>
+                            <span class="star-label">Star</span>
+                            <span class="star-count"></span>
+                        </button>
+                    </form>
+                {% else %}
+                    <span class="star-count"></span>
+                    <a href="{% url 'main:login' %}?next={{ request.path|urlencode }}" class="text-link">Login untuk memberi star</a>
+                {% endif %}
+                {% if can_edit %}
+                    <a class="button project-edit" data-href="{% url 'main:edit_project' '00000000-0000-0000-0000-000000000000' %}">Edit</a>
+                {% endif %}
+                {% if user.is_superuser %}
+                    <form method="post" class="project-delete" data-action="{% url 'main:delete_project' '00000000-0000-0000-0000-000000000000' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button feature-danger">Hapus Proyek</button>
+                    </form>
+                {% endif %}
+            </div>
+        </article>
+    </template>
 </main>
+{% if user.is_superuser %}
+    {% include "components/project_form_modal.html" %}
+{% endif %}
 {% endblock content %}

@@ -125,21 +125,29 @@ class ProjectFeatureTests(TestCase):
         self.client.force_login(self.owner)
         response = self.client.get(self.list_url)
         self.assertTemplateUsed(response, 'projects.html')
-        for text in ['Portfolio Website', 'Personal site', 'Django, Python', self.item.project_url, self.delete_url]:
-            self.assertContains(response, text)
+        self.assertContains(response, 'id="grid"')
+        self.assertContains(response, 'id="project-card-template"')
+        self.assertNotContains(response, self.item.title)
+        data = self.client.get(self.api_url).json()[0]
+        self.assertEqual(data['fields']['title'], self.item.title)
+        self.assertEqual(data['fields']['description'], self.item.description)
+        self.assertEqual(data['fields']['tech_stack'], self.item.tech_stack)
+        self.assertEqual(data['fields']['project_url'], self.item.project_url)
 
     def test_search_is_case_insensitive_and_trims_whitespace(self):
         Project.objects.create(**self.payload)
         response = self.client.get(self.list_url, {'title': '  PORTFOLIO  '})
-        self.assertContains(response, 'Portfolio Website')
-        self.assertNotContains(response, 'Weather App')
+        data = self.client.get(self.api_url, {'title': '  PORTFOLIO  '}).json()
+        self.assertEqual([item['fields']['title'] for item in data], ['Portfolio Website'])
+        self.assertEqual(response.context['title_query'], 'PORTFOLIO')
         self.assertContains(response, 'Reset')
 
     def test_empty_database_and_no_matches_have_different_messages(self):
         response = self.client.get(self.list_url, {'title': 'missing'})
-        self.assertContains(response, 'Tidak ada proyek dengan nama')
+        self.assertContains(response, 'id="empty"')
+        self.assertEqual(self.client.get(self.api_url, {'title': 'missing'}).json(), [])
         Project.objects.all().delete()
-        self.assertContains(self.client.get(self.list_url), 'Belum ada proyek yang ditambahkan.')
+        self.assertEqual(self.client.get(self.api_url).json(), [])
 
     def test_json_contains_filtered_records(self):
         Project.objects.create(**self.payload)
@@ -154,7 +162,7 @@ class ProjectFeatureTests(TestCase):
         self.client.force_login(self.owner)
         self.assertEqual(self.client.get(self.add_url).status_code, 200)
         response = self.client.post(self.add_url, self.payload, follow=True)
-        self.assertContains(response, 'Weather App')
+        self.assertEqual(self.client.get(self.api_url, {'title': 'Weather'}).json()[0]['fields']['title'], 'Weather App')
         self.assertContains(response, 'Proyek berhasil ditambahkan.')
         self.assertEqual(Project.objects.count(), 2)
 
@@ -169,7 +177,7 @@ class ProjectFeatureTests(TestCase):
     def test_absent_link_is_not_rendered(self):
         self.item.project_url = ''
         self.item.save()
-        self.assertNotContains(self.client.get(self.list_url), 'Lihat Proyek')
+        self.assertEqual(self.client.get(self.api_url).json()[0]['fields']['project_url'], '')
 
     def test_delete_get_preserves_and_post_removes_selected_project(self):
         self.client.force_login(self.owner)
@@ -198,4 +206,5 @@ class ProjectFeatureTests(TestCase):
         self.item.save()
         response = self.client.get(self.list_url)
         self.assertNotContains(response, '<script>')
-        self.assertContains(response, '&lt;script&gt;')
+        self.assertNotContains(response, self.item.title)
+        self.assertEqual(self.client.get(self.api_url).json()[0]['fields']['title'], self.item.title)

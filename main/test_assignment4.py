@@ -127,7 +127,7 @@ class Assignment4Tests(TestCase):
                 list_name = "show_projects" if section == "project" else f"show_{section}"
                 response = self.client.get(reverse("main:" + list_name))
                 for action in ("create", "edit", "delete"):
-                    url = reverse(f"main:{action}_{section}", args=[] if action == "create" else [item.pk])
+                    url = reverse(f"main:{action}_{section}", args=[] if action == "create" else ["00000000-0000-0000-0000-000000000000" if section == "project" else item.pk])
                     allowed = user == self.owner or (user == self.editor and action == "edit")
                     with self.subTest(user=user, section=section, action=action):
                         if allowed:
@@ -166,13 +166,23 @@ class Assignment4Tests(TestCase):
                     self.assertEqual(self.client.post(url).status_code, 302)
                     self.assertEqual(item.starred_by.count(), 1)
                     response = self.client.get(reverse("main:" + page))
-                    self.assertContains(response, 'aria-pressed="true"')
-                    self.assertContains(response, '<span class="star-count">1</span>', html=True)
+                    if item == self.project:
+                        fields = self.client.get(reverse("main:get_projects_json")).json()[0]["fields"]
+                        self.assertTrue(fields["is_starred"])
+                        self.assertEqual(fields["star_count"], 1)
+                    else:
+                        self.assertContains(response, 'aria-pressed="true"')
+                        self.assertContains(response, '<span class="star-count">1</span>', html=True)
                     item.starred_by.add(user)
                     self.assertEqual(item.starred_by.count(), 1)
                     self.assertEqual(self.client.post(url).status_code, 302)
                     self.assertEqual(item.starred_by.count(), 0)
-                    self.assertContains(self.client.get(reverse("main:" + page)), 'aria-pressed="false"')
+                    if item == self.project:
+                        fields = self.client.get(reverse("main:get_projects_json")).json()[0]["fields"]
+                        self.assertFalse(fields["is_starred"])
+                        self.assertEqual(fields["star_count"], 0)
+                    else:
+                        self.assertContains(self.client.get(reverse("main:" + page)), 'aria-pressed="false"')
             item.starred_by.add(self.regular, self.editor)
             self.login_as(self.regular)
             self.client.post(url)
@@ -216,7 +226,7 @@ class Assignment4Tests(TestCase):
         self.project.starred_by.add(self.regular)
         for route, expected_fields in (
             ("get_experience_json", {"title", "description", "category", "thumbnail", "started_at", "ended_at"}),
-            ("get_projects_json", {"title", "description", "tech_stack", "project_url"}),
+            ("get_projects_json", {"title", "description", "tech_stack", "project_url", "star_count", "is_starred"}),
         ):
             response = self.client.get(reverse("main:" + route))
             self.assertEqual(set(response.json()[0]["fields"]), expected_fields)
@@ -228,7 +238,12 @@ class Assignment4Tests(TestCase):
         self.project.starred_by.add(self.regular)
         for route in ("show_experience", "show_projects"):
             response = self.client.get(reverse("main:" + route))
-            self.assertContains(response, "1 star")
+            if route == "show_projects":
+                fields = self.client.get(reverse("main:get_projects_json")).json()[0]["fields"]
+                self.assertEqual(fields["star_count"], 1)
+                self.assertFalse(fields["is_starred"])
+            else:
+                self.assertContains(response, "1 star")
             self.assertContains(response, "Login untuk memberi star")
             self.assertNotContains(response, self.regular.username)
 

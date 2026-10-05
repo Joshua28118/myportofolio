@@ -41,4 +41,3 @@ python -m venv env
 .\env\Scripts\python.exe manage.py createsuperuser
 .\env\Scripts\python.exe manage.py runserver
 Jika environment dan superuser sudah tersedia, keduanya tidak perlu dibuat lagi. Konfigurasi lokal memakai PRODUCTION=False pada .env. Website dapat dibuka melalui http://127.0.0.1:8000/. Pengujian dijalankan menggunakan .\env\Scripts\python.exe manage.py test main. Sebanyak 50 pengujian otomatis berhasil, termasuk pembatasan akses, star/unstar, CSRF, keamanan JSON, serta session dan cookie. Pengujian memakai database sementara sehingga tidak menghapus data asli.
-
