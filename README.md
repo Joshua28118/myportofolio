@@ -43,36 +43,10 @@ python -m venv env
 Jika environment dan superuser sudah tersedia, keduanya tidak perlu dibuat lagi. Konfigurasi lokal memakai PRODUCTION=False pada .env. Website dapat dibuka melalui http://127.0.0.1:8000/. Pengujian dijalankan menggunakan .\env\Scripts\python.exe manage.py test main. Sebanyak 50 pengujian otomatis berhasil, termasuk pembatasan akses, star/unstar, CSRF, keamanan JSON, serta session dan cookie. Pengujian memakai database sementara sehingga tidak menghapus data asli.
 
 ### Assignment 5
-1. Debouncing adalah teknik menunda pemanggilan fungsi sampai pengguna berhenti melakukan suatu aktivitas selama waktu tertentu. Pada pencarian Experience, saya memakai jeda 300 milidetik setelah input terakhir. Setiap kali pengguna mengetik lagi, timer sebelumnya dibatalkan dan dimulai ulang. Dengan begitu, browser tidak mengirim request untuk setiap huruf yang diketik. Ini mengurangi request ke server dan mencegah daftar berubah terlalu sering. Tombol Cari atau Enter tetap menjalankan pencarian langsung. Request sebelumnya juga dibatalkan dengan AbortController agar hasil pencarian lama tidak menggantikan hasil terbaru.
+Assignment 5
 
-2. fetch() mengembalikan Promise, sehingga hasil request belum langsung tersedia saat fungsi dipanggil. await fetch() menunggu sampai respons tersedia sebelum baris berikutnya di dalam fungsi async dilanjutkan. Setelah itu, await response.json() menunggu isi respons selesai dibaca dan diubah menjadi data JavaScript. Proses menunggu ini tidak membekukan seluruh halaman. Kalau await dihilangkan tanpa penanganan Promise lain, variabel masih berisi Promise, bukan objek Response atau data JSON yang dibutuhkan, sehingga pemanggilan seperti response.json() bisa gagal. Alternatifnya adalah memakai .then(). Saya juga memeriksa response.ok karena status 400 atau 403 tidak otomatis membuat fetch() melempar error.
+1. Debouncing menunda pencarian sampai pengguna berhenti mengetik selama waktu tertentu. Di pencarian Experience, saya memasang jeda 300 milidetik, jadi browser tidak mengirim request setiap kali satu huruf diketik. Jumlah request dan beban server pun turun.
 
-3. Cross-Site Scripting atau XSS adalah serangan yang membuat browser menjalankan kode berbahaya dari data yang seharusnya hanya ditampilkan. Contohnya, judul berisi tag img dengan atribut onerror bisa menjalankan JavaScript saat dimasukkan melalui innerHTML. Template Django secara default melakukan auto-escaping pada variabel, sedangkan data JSON yang dimasukkan lewat JavaScript tidak otomatis mendapat perlindungan tersebut. AJAX sendiri bukan penyebab XSS; risikonya muncul ketika data diperlakukan sebagai HTML tanpa pengamanan. Pada halaman Experience, saya memakai textContent untuk menampilkan judul, deskripsi, kategori, dan teks lain. ExperienceForm juga membersihkan judul serta deskripsi dengan strip_tags, menolak hasil yang kosong, dan memvalidasi URL melalui URLField. URL thumbnail dibatasi lagi ke http/https saat dirender. strip_tags hanya lapisan tambahan, bukan pengganti perlindungan saat menampilkan data lama maupun data baru.
+2. await membuat fungsi async menunggu hasil fetch() sebelum lanjut ke baris berikutnya. await response.json() menunggu respons selesai diubah menjadi data JavaScript. Tanpa await atau .then(), kode hanya memegang Promise, belum respons atau datanya, sehingga belum bisa dipakai langsung.
 
-#### Implementasi dan cara menjalankan
-Bagian yang dilanjutkan adalah Experience dari Assignment 3 dan 4. Halaman /experience/ memuat kerangka halaman, lalu mengambil data dari /api/experience/. JSON berisi data publik, jumlah star, dan status star pengguna aktif, tanpa daftar akun pemberi star. Pencarian judul, loading/empty/error state, tombol Reset dan Coba lagi, modal tambah data, serta toast memakai JavaScript. Penambahan data dikirim ke /experience/add-ajax/ melalui POST dengan CSRF dan validasi ExperienceForm. Responsnya 201 untuk berhasil, 400 untuk input tidak valid, dan 403 untuk pengguna yang tidak berhak.
-
-Hak akses tetap mengikuti Assignment 4: pengunjung bisa membaca, pengguna login bisa memberi star, Editor bisa mengedit, dan superuser bisa menambah, mengedit, serta menghapus. Halaman detail, edit, konfirmasi hapus, serta star/unstar tetap tersedia. Daftar tetap mengikuti kata pencarian yang aktif setelah data ditambahkan; data baru akan terlihat jika judulnya cocok.
-
-Dari folder yang berisi manage.py, gunakan environment yang sudah tersedia:
-
-```powershell
-.\env\Scripts\python.exe -m pip install -r requirements.txt
-.\env\Scripts\python.exe manage.py migrate
-.\env\Scripts\python.exe manage.py check
-.\env\Scripts\python.exe manage.py runserver
-```
-
-Konfigurasi lokal memakai PRODUCTION=False. Buka http://127.0.0.1:8000/experience/. Assignment 5 tidak mengubah model, sehingga tidak membutuhkan migrasi baru. Superuser dan grup Editor tetap menggunakan konfigurasi Assignment 4.
-
-Pengujian otomatis:
-
-```powershell
-.\env\Scripts\python.exe manage.py test main
-.\env\Scripts\python.exe manage.py makemigrations --check --dry-run
-```
-
-#### Penggunaan AI
-Pengerjaan ini dibantu ChatGPT/Codex dengan PDF tugas, kode Tutorial 5, serta implementasi Assignment 3 dan 4 sebagai konteks. Bantuan mencakup view JSON, pencarian AJAX, modal, validasi dan perlindungan XSS/CSRF, penyesuaian tes, pengujian browser, serta penyusunan jawaban refleksi ini. Instruksi tambahan saya adalah mempertahankan fitur sebelumnya dan tidak menambahkan komentar kode baru.
-
-Hasil AI diperiksa melalui pengujian Django dan browser, bukan hanya dari tampilannya. Pengujian tidak membuktikan bahwa semua kemungkinan bug sudah tertangani atau bahwa persyaratan waktu pengumpulan telah terpenuhi. Perbaikan selama sesi dilakukan oleh Codex dan tidak diklaim sebagai perbaikan manual mahasiswa. Ringkasan prompt, cakupan bantuan, dan hasil pemeriksaan tersedia di [log bantuan AI Assignment 5](docs/assignment5-ai-log.md).
+3. XSS adalah serangan yang menyisipkan kode berbahaya lewat data yang tampil di halaman. Template Django meng-escape data secara otomatis, tetapi JavaScript yang memasukkan data lewat innerHTML tidak melakukannya. Saya memakai textContent supaya data tampil sebagai teks biasa, dan menambahkan strip_tags di form sebagai lapisan perlindungan kedua.

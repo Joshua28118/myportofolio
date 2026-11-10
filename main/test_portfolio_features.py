@@ -127,7 +127,7 @@ class ProjectFeatureTests(TestCase):
         response = self.client.get(self.list_url)
         self.assertTemplateUsed(response, 'projects.html')
         self.assertContains(response, 'id="grid"')
-        self.assertContains(response, 'id="project-card-template"')
+        self.assertContains(response, reverse("api:project-list"))
         self.assertNotContains(response, self.item.title)
         data = self.client.get(self.api_url).json()[0]
         self.assertEqual(data['fields']['title'], self.item.title)
@@ -206,6 +206,6 @@ class ProjectFeatureTests(TestCase):
         self.item.title = '<script>alert(1)</script>'
         self.item.save()
         response = self.client.get(self.list_url)
-        self.assertNotContains(response, '<script>')
+        self.assertNotContains(response, 'alert(1)')
         self.assertNotContains(response, self.item.title)
         self.assertEqual(self.client.get(self.api_url).json()[0]['fields']['title'], self.item.title)

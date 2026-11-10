@@ -1,0 +1,5 @@
+{% for contact in contacts %}
+  {% include "contacts/_contact_row.html" %}
+{% empty %}
+  <tr><td colspan="3">No contacts.</td></tr>
+{% endfor %}

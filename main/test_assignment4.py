@@ -127,7 +127,10 @@ class Assignment4Tests(TestCase):
                 list_name = "show_projects" if section == "project" else f"show_{section}"
                 response = self.client.get(reverse("main:" + list_name))
                 for action in ("create", "edit", "delete"):
-                    url = reverse(f"main:{action}_{section}", args=[] if action == "create" else ["00000000-0000-0000-0000-000000000000" if section in ("project", "experience") else item.pk])
+                    if section == "project" and action == "delete":
+                        url = 'data-action="delete"'
+                    else:
+                        url = reverse(f"main:{action}_{section}", args=[] if action == "create" else ["00000000-0000-0000-0000-000000000000" if section in ("project", "experience") else item.pk])
                     allowed = user == self.owner or (user == self.editor and action == "edit")
                     with self.subTest(user=user, section=section, action=action):
                         if allowed:

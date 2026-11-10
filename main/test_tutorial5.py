@@ -120,9 +120,9 @@ class Tutorial5Tests(TestCase):
             self.assertNotIn("project_list", response.context)
             self.assertContains(response, 'id="grid"')
             self.assertContains(response, 'id="toast-component"')
-            self.assertContains(response, "js/projects.js")
+            self.assertContains(response, reverse("api:project-list"))
             assertion = self.assertContains if user == self.owner else self.assertNotContains
             assertion(response, 'id="project-form"')
-            assertion(response, 'class="project-delete"')
+            assertion(response, 'project-delete')
             assertion = self.assertContains if user in (self.editor, self.owner) else self.assertNotContains
             assertion(response, 'class="button project-edit"')

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contacts</title>
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 720px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border-bottom: 1px solid #ddd; padding: 0.5rem; text-align: left; }
+    input, button { padding: 0.4rem; font: inherit; }
+    form { display: inline; }
+  </style>
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <h1>Add Contact</h1>
+  <form hx-post="{% url 'contacts:contact_add' %}"
+        hx-target="#contact-rows"
+        hx-swap="innerHTML"
+        hx-on::after-request="if (event.detail.successful) this.reset()">
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <button type="submit">Add</button>
+  </form>
+
+  <h1>Contact List</h1>
+  <input type="search" name="q" placeholder="Search contacts..."
+         hx-get="{% url 'contacts:contact_search' %}"
+         hx-trigger="keyup changed delay:300ms, search"
+         hx-target="#contact-rows"
+         hx-indicator="#search-indicator">
+  <span id="search-indicator" class="htmx-indicator">Searching...</span>
+
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Email</th><th></th></tr>
+    </thead>
+    <tbody id="contact-rows">
+      {% include "contacts/_contact_rows.html" %}
+    </tbody>
+  </table>
+</body>
+</html>

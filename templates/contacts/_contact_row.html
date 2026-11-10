@@ -1,0 +1,19 @@
+<tr id="contact-{{ contact.id }}">
+  <td>{{ contact.name }}</td>
+  <td>{{ contact.email }}</td>
+  <td>
+    <button type="button"
+            hx-get="{% url 'contacts:contact_edit' contact.id %}"
+            hx-target="closest tr"
+            hx-swap="outerHTML">
+      Edit
+    </button>
+    <button type="button"
+            hx-delete="{% url 'contacts:contact_delete' contact.id %}"
+            hx-target="closest tr"
+            hx-swap="outerHTML"
+            hx-confirm="Delete {{ contact.name }}?">
+      Delete
+    </button>
+  </td>
+</tr>
