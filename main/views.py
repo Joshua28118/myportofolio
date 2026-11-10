@@ -80,6 +80,7 @@ def show_experience(request):
     context = {
         "name": "Joshua Imanuel Setiawan",
         "form": ExperienceForm(),
+        "edit_form": ExperienceForm(auto_id="id_edit_%s"),
         "title_query": request.GET.get("title", "").strip(),
         "can_edit": can_edit_portfolio(request.user),
     }

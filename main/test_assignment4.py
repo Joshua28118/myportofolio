@@ -127,8 +127,13 @@ class Assignment4Tests(TestCase):
                 list_name = "show_projects" if section == "project" else f"show_{section}"
                 response = self.client.get(reverse("main:" + list_name))
                 for action in ("create", "edit", "delete"):
-                    if section == "project" and action == "delete":
-                        url = 'data-action="delete"'
+                    api_markers = {
+                        ("project", "delete"): 'data-action="delete"',
+                        ("experience", "edit"): 'class="button experience-edit"',
+                        ("experience", "delete"): 'class="experience-delete"',
+                    }
+                    if (section, action) in api_markers:
+                        url = api_markers[(section, action)]
                     else:
                         url = reverse(f"main:{action}_{section}", args=[] if action == "create" else ["00000000-0000-0000-0000-000000000000" if section in ("project", "experience") else item.pk])
                     allowed = user == self.owner or (user == self.editor and action == "edit")

@@ -28,9 +28,8 @@ class ExperienceFeatureTests(TestCase):
     def test_list_exposes_actions_and_existing_status(self):
         response = self.client.get(reverse('main:show_experience'))
         self.assertContains(response, self.add_url)
-        placeholder = '00000000-0000-0000-0000-000000000000'
-        self.assertContains(response, reverse('main:edit_experience', args=[placeholder]))
-        self.assertContains(response, reverse('main:delete_experience', args=[placeholder]))
+        self.assertContains(response, 'class="button experience-edit"')
+        self.assertContains(response, 'class="experience-delete"')
         self.assertTrue(self.client.get(reverse('main:get_experience_json')).json()[0]['fields']['is_ongoing'])
         self.assertContains(response, 'popover="auto"')
 
